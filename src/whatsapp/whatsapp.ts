@@ -1,13 +1,13 @@
-import makeWASocket, { useMultiFileAuthState} from "@whiskeysockets/baileys";
+import makeWASocket, { proto, useMultiFileAuthState} from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import P from "pino";
 import { connected } from "../helper/connection.update.js";
 import { extractMessageData } from "../helper/message.info.js";
 import { isIgnoredChat } from "../helper/ignoreMessage.js";
-import { getHistory, saveHistory } from "../helper/cofig.js";
+import { addMessage } from "../helper/cofig.js";
 import {handleTextMessage } from "../handler/handleText.js";
 import { handleImageMessage } from "../handler/handleImage.js";
-import { downloadMedia } from "../helper/media.download.js";
+import console from "node:console";
 
 let isEnableAi = true;
 
@@ -35,10 +35,10 @@ export async function connectToWhatsApp() {
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
       const msg = messages[0];
-
+      
       if (!msg?.message) return;
 
-      const {chatId, chatNumber, userName, text, imageMessage} = extractMessageData(msg);
+      const {chatId, chatNumber, userName, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage} = extractMessageData(msg);
 
       if (!chatId) return;
 
@@ -46,9 +46,21 @@ export async function connectToWhatsApp() {
 
       if (chatId.endsWith("@g.us")) return;
 
-      const history = getHistory(chatId);
+      if (albumMessage && !isMe) {
 
-      if (msg.key.fromMe) {
+        await sock.sendMessage(chatId, {
+          text: `📸 আপনি একসাথে অনেকগুলো ছবি বা ভিডিও পাঠিয়েছেন!\n\nদুঃখিত, এগুলোর উত্তর দেওয়া আমার পক্ষে সম্ভব না। 😔\n\n_A R S Arafat আমাকে এই বিষয়ে প্রশিক্ষণ দেননি, তবে তিনি এর উত্তর অনেক ভালোভাবে দিতে পারবেন। 🙂_`
+        });
+
+        return;
+
+      }
+
+      if (isAlbumChild) return; 
+
+      if (unsendMessage) return; 
+
+      if (isMe) {
         if ( text === '.ai') {
           isEnableAi = !isEnableAi;
 
@@ -59,25 +71,14 @@ export async function connectToWhatsApp() {
           return;
         }
 
-        if(imageMessage){
-          const buffer : any = await downloadMedia(msg, sock);
-              
-          history.push({
-            role: "user",
-            content: imageMessage.caption || "Describe this image",
-            images: [buffer.toString("base64")]
-          })
+        if(text && text !== `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}`) {
 
-        }else{
-
-          history.push({
+          await addMessage(chatId, {
             role: "assistant",
             content: text,
-          });
+          })
           
         }
-
-        saveHistory(chatId, history);
 
         return;
       };
@@ -88,11 +89,11 @@ export async function connectToWhatsApp() {
 
         if(imageMessage){
 
-          await handleImageMessage(sock, msg, chatId, history, userName, imageMessage);
+          await handleImageMessage(sock, msg, chatId, userName, imageMessage);
 
         }else if(text) {
 
-          await handleTextMessage(sock, chatId, history, userName, text)
+          await handleTextMessage(sock, chatId, userName, text)
 
         }else {
           await sock.sendMessage(chatId, {

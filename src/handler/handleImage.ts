@@ -1,22 +1,20 @@
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { generatedReply } from "../ai brain/ollama.js";
-import { saveHistory, type ChatMessage } from "../helper/cofig.js";
 import { downloadMedia } from "../helper/media.download.js";
+import { addMessage } from "../helper/cofig.js";
 
-export const handleImageMessage = async ( sock: any, msg: WAMessage, chatId: string, history: ChatMessage[], userName: string, imageMessage: any ) => {
+export const handleImageMessage = async ( sock: any, msg: WAMessage, chatId: string, userName: string, imageMessage: any ) => {
     const buffer : any = await downloadMedia(msg, sock);
     
-    history.push({
+    await addMessage(chatId, {
         role: "user",
         content: imageMessage.caption || "Describe this image",
         images: [buffer.toString("base64")]
     })
     
-    saveHistory(chatId, history);
-
     await sock.sendPresenceUpdate("composing", chatId);
 
-    const reply = await generatedReply(history, userName);
+    const reply = await generatedReply(chatId, userName);
 
     await sock.sendMessage(chatId, {
         text: reply

@@ -23,7 +23,10 @@
   "dependencies": {
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "dotenv": "^17.4.2",
+    "duck-duck-scrape": "^2.2.7",
     "express": "^5.2.1",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.3",
     "ollama": "^0.6.3",
     "qrcode-terminal": "^0.12.0"
   }

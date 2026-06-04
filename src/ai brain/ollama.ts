@@ -1,5 +1,5 @@
 import { Ollama } from 'ollama';
-import { greet, type ChatMessage } from '../helper/cofig.js';
+import { getHistory, greet, type ChatMessage } from '../helper/cofig.js';
 import { prompt } from '../prompt/system.prompt.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -11,7 +11,9 @@ const ollama = new Ollama({
   },
 });
 
-export async function generatedReply(history : ChatMessage[], userName : string) {
+export async function generatedReply(chatId : string, userName : string) {
+
+    const history : ChatMessage[] = await getHistory(chatId);
 
     if (history.length === 1) {
         return `${greet()} ${userName}, 👋\n\nআমি *A R S AI* 🤖\nবলুন, আমি আপনাকে কীভাবে সাহায্য করতে পারি?😊`

@@ -1,18 +1,16 @@
 import { generatedReply } from "../ai brain/ollama.js";
-import { saveHistory, type ChatMessage } from "../helper/cofig.js";
+import { addMessage } from "../helper/cofig.js";
 
-export const handleTextMessage = async ( sock: any, chatId: string, history: ChatMessage[], userName: string, text : string) => {
+export const handleTextMessage = async ( sock: any, chatId: string, userName: string, text : string) => {
 
-  history.push({
-    role: "user",
-    content: text,
-  });
-
-  saveHistory(chatId, history);
-
+  await addMessage(chatId, {
+    role : "user",
+    content : text
+  })
+  
   await sock.sendPresenceUpdate("composing", chatId);
 
-  const reply = await generatedReply(history,userName);
+  const reply = await generatedReply(chatId,userName);
   
   await sock.sendMessage(chatId, {
     text: reply,

@@ -1,4 +1,4 @@
-export const chats = new Map();
+import { Chat } from "../models/chat.model.js";
 
 export type ChatMessage = {
     role: "user" | "assistant";
@@ -15,14 +15,25 @@ export const greet = () => {
     return 'Good Night';
 }
 
-export function getHistory(chatId: string) {
-  return chats.get(chatId) || [];
+export async function getHistory(chatId: string) {
+  const chat = await Chat.findOne({chatId}).lean();
+
+  return chat?.history || [];
 }
 
-export function saveHistory(chatId: string, history: ChatMessage[]) {
-  if (history.length > 20) {
-    history.splice(0, history.length - 20);
-  }
+export async function addMessage(chatId: string, message: ChatMessage) {
+  await Chat.findOneAndUpdate(
+    { chatId },
 
-  chats.set(chatId, history);
+    { $push: 
+      { history: 
+        { 
+          $each: [message], 
+          $slice: -20
+        }
+      } 
+    },
+
+    { upsert: true }
+  );
 }
