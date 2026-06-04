@@ -60,20 +60,20 @@ export async function connectToWhatsApp() {
 
       if (unsendMessage) return;
       
-      if(!isEnableAi) return;
-
       if (isMe) {
+        const speech = `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}`
+
         if ( text === '.ai') {
           isEnableAi = !isEnableAi;
 
           await sock.sendMessage(chatId, {
-            text: `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}`
+            text: speech
           });
 
           return;
         }
 
-        if(text && text !== `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}`) {
+        if(text && text !== speech && isEnableAi) {
 
           await addMessage(chatId, {
             role: "assistant",
@@ -84,6 +84,8 @@ export async function connectToWhatsApp() {
 
         return;
       };
+
+      if(!isEnableAi) return;
 
       try{
 
