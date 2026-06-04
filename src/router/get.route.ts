@@ -2,7 +2,7 @@ import express, { type Request, type Response } from 'express';
 
 const router = express.Router();
 
-const SERVER_URL = "https://whatsapp-ai-assistant-la5x.onrender.com";
+const SERVER_URL = "https://whatsapp-ai-assistant-qf9c.onrender.com";
 
 router.route('/').get((req : Request, res : Response) => {
     res.status(200).json({
