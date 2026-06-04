@@ -35,10 +35,10 @@ export async function connectToWhatsApp() {
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
       const msg = messages[0];
-      
+
       if (!msg?.message) return;
 
-      const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage} = extractMessageData(msg);
+      const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage} = extractMessageData(msg);
 
       if (!chatId) return;
 
@@ -59,6 +59,8 @@ export async function connectToWhatsApp() {
       if (isAlbumChild) return; 
 
       if (unsendMessage) return;
+
+      if(reactionMessage) return;
       
       if (isMe) {
 

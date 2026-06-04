@@ -13,6 +13,7 @@ export type MessageInfo = {
 
   isAlbumChild: boolean;
   unsendMessage: boolean;
+  reactionMessage : proto.Message.IAlbumMessage | null;
 };
 
 export function extractMessageData(msg: any) {
@@ -33,6 +34,8 @@ export function extractMessageData(msg: any) {
             ?.messageAssociation?.associationType === 
             proto.MessageAssociation.AssociationType.MEDIA_ALBUM,
 
-    unsendMessage : !! msg.message?.protocolMessage        
+    unsendMessage : !! msg.message?.protocolMessage ,
+    
+    reactionMessage : msg?.message?.reactionMessage
   };
 }
