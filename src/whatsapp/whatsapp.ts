@@ -1,4 +1,4 @@
-import makeWASocket, { useMultiFileAuthState, type WAMessage} from "@whiskeysockets/baileys";
+import makeWASocket, { useMultiFileAuthState} from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import P from "pino";
 import { connected } from "../helper/connection.update.js";

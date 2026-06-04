@@ -1,6 +1,15 @@
+import { Ollama } from 'ollama';
 import { greet, type ChatMessage } from '../helper/cofig.js';
 import { prompt } from '../prompt/system.prompt.js';
-import ollama from 'ollama';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const ollama = new Ollama({
+  host: "https://ollama.com",
+  headers: {
+    Authorization: "Bearer " + process.env.OLLAMA_API_KEY,
+  },
+});
 
 export async function generatedReply(history : ChatMessage[], userName : string) {
 
