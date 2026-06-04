@@ -13,7 +13,7 @@ export type MessageInfo = {
 
   isAlbumChild: boolean;
   unsendMessage: boolean;
-  reactionMessage : proto.Message.IAlbumMessage | null;
+  reactionMessage : proto.Message.IReactionMessage | null;
 };
 
 export function extractMessageData(msg: any) {
