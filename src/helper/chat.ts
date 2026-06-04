@@ -25,7 +25,7 @@ export async function getHistory(chatId: string) {
 }
 
 export async function addMessage(msg : WAMessage, message: ChatMessage) {
-  const {chatId, chatNumber,  userName} = extractMessageData(msg);
+  const {chatId, chatNumber} = extractMessageData(msg);
       
   await Chat.findOneAndUpdate(
     { chatId },
