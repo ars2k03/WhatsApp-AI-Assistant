@@ -42,17 +42,6 @@
 - **dotenv**
 - **qrcode-terminal**
 
-## 📁 Project Structure
-
-```bash
-src/
-├── ai brain/
-├── handler/
-├── helper/
-├── prompt/
-├── whatsapp/
-└── server.ts
-```
 
 ## 🚀 Getting Started
 
