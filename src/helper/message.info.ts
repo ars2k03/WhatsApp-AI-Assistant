@@ -1,5 +1,20 @@
 import { proto } from "@whiskeysockets/baileys";
 
+export type MessageInfo = {
+  chatId: string;
+  chatNumber: string;
+  userName: string;
+  isMe: boolean;
+
+  text?: string;
+
+  imageMessage?: proto.Message.IImageMessage | null;
+  albumMessage?: proto.Message.IAlbumMessage | null;
+
+  isAlbumChild: boolean;
+  unsendMessage: boolean;
+};
+
 export function extractMessageData(msg: any) {
   return {
     chatId: msg.key.remoteJid,

@@ -1,10 +1,10 @@
-import makeWASocket, { proto, useMultiFileAuthState} from "@whiskeysockets/baileys";
+import makeWASocket, {useMultiFileAuthState} from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import P from "pino";
 import { connected } from "../helper/connection.update.js";
 import { extractMessageData } from "../helper/message.info.js";
 import { isIgnoredChat } from "../helper/ignoreMessage.js";
-import { addMessage } from "../helper/cofig.js";
+import { addMessage } from "../helper/chat.js";
 import {handleTextMessage } from "../handler/handleText.js";
 import { handleImageMessage } from "../handler/handleImage.js";
 import console from "node:console";
@@ -38,7 +38,7 @@ export async function connectToWhatsApp() {
       
       if (!msg?.message) return;
 
-      const {chatId, chatNumber, userName, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage} = extractMessageData(msg);
+      const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage} = extractMessageData(msg);
 
       if (!chatId) return;
 
@@ -74,7 +74,7 @@ export async function connectToWhatsApp() {
 
         if(text && text !== `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}` && isEnableAi) {
 
-          await addMessage(chatId, chatNumber, {
+          await addMessage(msg, {
             role: "assistant",
             content: text,
           })
@@ -90,11 +90,11 @@ export async function connectToWhatsApp() {
 
         if(imageMessage){
 
-          await handleImageMessage(sock, msg, chatId, userName, imageMessage, chatNumber);
+          await handleImageMessage(sock, msg);
 
         }else if(text) {
 
-          await handleTextMessage(sock, chatId, userName, text, chatNumber)
+          await handleTextMessage(sock, msg)
 
         }else {
           await sock.sendMessage(chatId, {

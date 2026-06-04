@@ -1,4 +1,6 @@
+import type { WAMessage } from "@whiskeysockets/baileys";
 import { Chat } from "../models/chat.model.js";
+import { extractMessageData } from "./message.info.js";
 
 export type ChatMessage = {
     role: "user" | "assistant";
@@ -15,19 +17,23 @@ export const greet = () => {
     return 'Good Night';
 }
 
+
 export async function getHistory(chatId: string) {
   const chat = await Chat.findOne({chatId}).lean();
 
   return chat?.history || [];
 }
 
-export async function addMessage(chatId: string, chatNumber : string, message: ChatMessage) {
+export async function addMessage(msg : WAMessage, message: ChatMessage) {
+  const {chatId, chatNumber,  userName} = extractMessageData(msg);
+      
   await Chat.findOneAndUpdate(
     { chatId },
     
     { 
       $setOnInsert : {
-        chatNumber
+        chatNumber,
+        userName
       },
       
       $push: 

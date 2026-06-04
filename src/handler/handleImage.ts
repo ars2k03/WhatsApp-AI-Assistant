@@ -1,12 +1,15 @@
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { generatedReply } from "../ai brain/ollama.js";
 import { downloadMedia } from "../helper/media.download.js";
-import { addMessage } from "../helper/cofig.js";
+import { addMessage } from "../helper/chat.js";
+import { extractMessageData } from "../helper/message.info.js";
 
-export const handleImageMessage = async ( sock: any, msg: WAMessage, chatId: string, userName: string, imageMessage: any , chatNumber : string) => {
+export const handleImageMessage = async ( sock: any, msg: WAMessage) => {
+    const {chatId, userName, imageMessage} = extractMessageData(msg);
+    
     const buffer : any = await downloadMedia(msg, sock);
     
-    await addMessage(chatId, chatNumber, {
+    await addMessage(msg, {
         role: "user",
         content: imageMessage.caption || "Describe this image",
         images: [buffer.toString("base64")]

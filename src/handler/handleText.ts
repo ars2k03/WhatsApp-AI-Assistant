@@ -1,9 +1,12 @@
+import type { WAMessage } from "@whiskeysockets/baileys";
 import { generatedReply } from "../ai brain/ollama.js";
-import { addMessage } from "../helper/cofig.js";
+import { addMessage } from "../helper/chat.js";
+import { extractMessageData } from "../helper/message.info.js";
 
-export const handleTextMessage = async ( sock: any, chatId: string, userName: string, text : string, chatNumber : string) => {
+export const handleTextMessage = async ( sock: any, msg: WAMessage) => {
+  const {chatId, userName, text} = extractMessageData(msg);
 
-  await addMessage(chatId, chatNumber, {
+  await addMessage(msg, {
     role : "user",
     content : text
   })

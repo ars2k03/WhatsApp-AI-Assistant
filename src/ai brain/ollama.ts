@@ -1,5 +1,5 @@
 import { Ollama } from 'ollama';
-import { getHistory, greet, type ChatMessage } from '../helper/cofig.js';
+import { getHistory, greet, type ChatMessage } from '../helper/chat.js';
 import { prompt } from '../prompt/system.prompt.js';
 import dotenv from 'dotenv';
 dotenv.config();
