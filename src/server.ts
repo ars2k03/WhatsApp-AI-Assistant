@@ -6,13 +6,16 @@ dotenv.config();
 const app : Application= express();
 const port = 8000;
 
-const SERVER_URL = "https://your-render-url.onrender.com";
+const SERVER_URL = "https://whatsapp-ai-assistant-9uem.onrender.com";
 
 app.use(express.json());
 
 
 app.get("/health", (req : Request, res : Response) => {
-  res.send("OK");
+  res.status(200).json({
+    success : true,
+    message : 'OK'
+  });
 });
 
 setInterval(async () => {
