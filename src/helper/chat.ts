@@ -32,8 +32,7 @@ export async function addMessage(msg : WAMessage, message: ChatMessage) {
     
     { 
       $setOnInsert : {
-        chatNumber,
-        userName
+        chatNumber
       },
       
       $push: 

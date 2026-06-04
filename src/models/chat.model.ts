@@ -36,11 +36,6 @@ const ChatSchema = new mongoose.Schema(
       unique : true,
     },
 
-    userName : {
-      type : String,
-      default: "Unknown User"
-    },
-
     history: {
       type: [MessageSchema],
       default: [],
