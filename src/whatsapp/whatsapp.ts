@@ -58,7 +58,9 @@ export async function connectToWhatsApp() {
 
       if (isAlbumChild) return; 
 
-      if (unsendMessage) return; 
+      if (unsendMessage) return;
+      
+      if(!isEnableAi) return;
 
       if (isMe) {
         if ( text === '.ai') {
@@ -82,8 +84,6 @@ export async function connectToWhatsApp() {
 
         return;
       };
-
-      if(!isEnableAi) return;
 
       try{
 
