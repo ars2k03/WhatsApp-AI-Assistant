@@ -74,7 +74,7 @@ export async function connectToWhatsApp() {
 
         if(text && text !== `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}` && isEnableAi) {
 
-          await addMessage(chatId, {
+          await addMessage(chatId, chatNumber, {
             role: "assistant",
             content: text,
           })
@@ -90,11 +90,11 @@ export async function connectToWhatsApp() {
 
         if(imageMessage){
 
-          await handleImageMessage(sock, msg, chatId, userName, imageMessage);
+          await handleImageMessage(sock, msg, chatId, userName, imageMessage, chatNumber);
 
         }else if(text) {
 
-          await handleTextMessage(sock, chatId, userName, text)
+          await handleTextMessage(sock, chatId, userName, text, chatNumber)
 
         }else {
           await sock.sendMessage(chatId, {

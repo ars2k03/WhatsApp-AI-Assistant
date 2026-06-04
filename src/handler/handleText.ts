@@ -1,9 +1,9 @@
 import { generatedReply } from "../ai brain/ollama.js";
 import { addMessage } from "../helper/cofig.js";
 
-export const handleTextMessage = async ( sock: any, chatId: string, userName: string, text : string) => {
+export const handleTextMessage = async ( sock: any, chatId: string, userName: string, text : string, chatNumber : string) => {
 
-  await addMessage(chatId, {
+  await addMessage(chatId, chatNumber, {
     role : "user",
     content : text
   })

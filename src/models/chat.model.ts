@@ -30,6 +30,12 @@ const ChatSchema = new mongoose.Schema(
       unique: true,
     },
 
+    chatNumber : {
+      type : String,
+      required : true,
+      unique : true,
+    },
+
     history: {
       type: [MessageSchema],
       default: [],

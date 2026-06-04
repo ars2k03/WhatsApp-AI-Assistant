@@ -3,10 +3,10 @@ import { generatedReply } from "../ai brain/ollama.js";
 import { downloadMedia } from "../helper/media.download.js";
 import { addMessage } from "../helper/cofig.js";
 
-export const handleImageMessage = async ( sock: any, msg: WAMessage, chatId: string, userName: string, imageMessage: any ) => {
+export const handleImageMessage = async ( sock: any, msg: WAMessage, chatId: string, userName: string, imageMessage: any , chatNumber : string) => {
     const buffer : any = await downloadMedia(msg, sock);
     
-    await addMessage(chatId, {
+    await addMessage(chatId, chatNumber, {
         role: "user",
         content: imageMessage.caption || "Describe this image",
         images: [buffer.toString("base64")]

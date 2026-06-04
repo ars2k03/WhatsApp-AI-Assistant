@@ -21,17 +21,22 @@ export async function getHistory(chatId: string) {
   return chat?.history || [];
 }
 
-export async function addMessage(chatId: string, message: ChatMessage) {
+export async function addMessage(chatId: string, chatNumber : string, message: ChatMessage) {
   await Chat.findOneAndUpdate(
     { chatId },
-
-    { $push: 
-      { history: 
-        { 
-          $each: [message], 
-          $slice: -20
-        }
-      } 
+    
+    { 
+      $setOnInsert : {
+        chatNumber
+      },
+      
+      $push: 
+        { history: 
+          { 
+            $each: [message], 
+            $slice: -20
+          }
+        } 
     },
 
     { upsert: true }
