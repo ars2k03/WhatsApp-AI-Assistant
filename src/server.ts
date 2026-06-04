@@ -1,7 +1,7 @@
 import express, { type Application, type Request, type Response } from "express";
 import "./whatsapp/whatsapp.js";
 import dotenv from 'dotenv';
-import { connectDB } from "./database/db.js";
+import { connectDB } from "./database/users.js";
 import router from "./router/get.route.js";
 dotenv.config();
 

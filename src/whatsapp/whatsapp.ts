@@ -1,4 +1,4 @@
-import makeWASocket, {useMultiFileAuthState} from "@whiskeysockets/baileys";
+import makeWASocket from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import P from "pino";
 import { connected } from "../helper/connection.update.js";
@@ -7,12 +7,13 @@ import { isIgnoredChat } from "../helper/ignoreMessage.js";
 import { addMessage } from "../helper/chat.js";
 import {handleTextMessage } from "../handler/handleText.js";
 import { handleImageMessage } from "../handler/handleImage.js";
-import console from "node:console";
+import { useMongoAuthState } from "../helper/mongoAuthState.js";
+import collection from "../database/auth.js";
 
 let isEnableAi = true;
 
 export async function connectToWhatsApp() {
-  const { state, saveCreds } = await useMultiFileAuthState("WhatsApp_Auth");
+  const { state, saveCreds } = await useMongoAuthState(collection);
 
   const sock = makeWASocket({
     auth: state,
