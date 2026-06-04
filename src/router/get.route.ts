@@ -2,7 +2,7 @@ import express, { type Request, type Response } from 'express';
 
 const router = express.Router();
 
-const SERVER_URL = "http://localhost:8000";
+const SERVER_URL = "https://whatsapp-ai-assistant-la5x.onrender.com";
 
 router.route('/').get((req : Request, res : Response) => {
     res.status(200).json({
@@ -18,6 +18,6 @@ setInterval(async () => {
   } catch (error) {
     console.error("Health check failed:", error);
   }
-}, 5 * 60* 1000);
+}, 60* 1000);
 
 export default router;
