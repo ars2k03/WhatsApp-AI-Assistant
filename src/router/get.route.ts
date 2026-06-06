@@ -5,6 +5,8 @@ const router = express.Router();
 const SERVER_URL = "https://whatsapp-ai-assistant-ee5w.onrender.com";
 
 router.route('/').get((req : Request, res : Response) => {
+  
+    console.log('Cron_Job sent successful ✅')
     res.status(200).json({
         success : true,
         message : 'OK'
@@ -14,7 +16,7 @@ router.route('/').get((req : Request, res : Response) => {
 setInterval(async () => {
   try {
     await fetch(`${SERVER_URL}/health`);
-    console.log("Self ping sent ✅");
+    console.log("Self ping sent successful ✅");
   } catch (error) {
     console.error("Health check failed:", error);
   }
