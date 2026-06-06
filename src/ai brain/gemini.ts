@@ -1,7 +1,7 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import dotenv from "dotenv";
 import { audioPrompt } from "../system prompt/audio.prompt.js";
-import { addMessage } from "../helper/chat.js";
+import { addMessage, getHistory } from "../helper/chat.js";
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { extractMessageData } from "../helper/message.info.js";
 dotenv.config();
@@ -14,10 +14,12 @@ const CHUNK_SIZE = 24000 * 2 * 0.1;
 
 export const generatedReplyAudio = async (pcmBuffer : Buffer, msg : WAMessage) : Promise <Buffer> => {
 
-    const {userName} = extractMessageData(msg);
+    const {userName, chatId} = extractMessageData(msg);
+
     const audioChunks: Buffer[] = [];
     const outputTranscriptParts: string[] = [];
 
+    const history = await getHistory(chatId);
 
     return new Promise(async (resolve, reject) => {
 
@@ -41,7 +43,7 @@ export const generatedReplyAudio = async (pcmBuffer : Buffer, msg : WAMessage) :
             },
 
             callbacks: {
-                onopen: () => {
+                onopen: async () => {
                     console.log("Connected ✅");
                 },
 
@@ -111,6 +113,39 @@ export const generatedReplyAudio = async (pcmBuffer : Buffer, msg : WAMessage) :
                 },
             },
         });
+
+        if(history.length > 0) {
+            await session.sendClientContent({
+                
+                turns: history.map((h) => ({
+                    
+                    role: "user",
+                    parts: [
+                        ...(h.content ? [{ text: h.content }] : []),
+
+                        ...(h.images?.map((img: string) => {
+
+                        const data = img.includes("base64,")
+                            ? img.split("base64,")[1]
+                            : img;
+
+                        if (!data) {
+                            throw new Error("Invalid base64 image");
+                        }
+
+                        return {
+                            inlineData: {
+                                mimeType: "image/jpeg",
+                                data,
+                            },
+                        };
+                    }) ?? [])
+                    ]
+                })),
+
+                turnComplete: false
+            });
+        }
 
         //Send audio chunk in gemini
         for (let i = 0; i < pcmBuffer.length; i += CHUNK_SIZE) {
