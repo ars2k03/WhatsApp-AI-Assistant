@@ -1,4 +1,4 @@
-import express, { type Application, type Request, type Response } from "express";
+import express, { type Application} from "express";
 import "./whatsapp/whatsapp.js";
 import dotenv from 'dotenv';
 import { connectDB } from "./database/users.js";
@@ -15,5 +15,6 @@ app.use('/health', router);
 await connectDB();
 
 app.listen(port, () => {
+    
     console.log(`Server is Running ${port}....`);
 })

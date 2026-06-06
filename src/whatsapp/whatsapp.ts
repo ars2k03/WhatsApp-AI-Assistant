@@ -9,6 +9,7 @@ import {handleTextMessage } from "../handler/handleText.js";
 import { handleImageMessage } from "../handler/handleImage.js";
 import { useMongoAuthState } from "../helper/mongoAuthState.js";
 import collection from "../database/auth.js";
+import {handleAudioMessage } from "../handler/handleAudio.js";
 
 let isEnableAi = true;
 
@@ -39,13 +40,15 @@ export async function connectToWhatsApp() {
 
       if (!msg?.message) return;
 
-      const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage} = extractMessageData(msg);
+      const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage, audioMessage, editMessage} = extractMessageData(msg);
 
       if (!chatId) return;
 
       if (isIgnoredChat(chatNumber)) return;
 
       if (chatId.endsWith("@g.us")) return;
+
+      if(editMessage) return;
 
       if (albumMessage && !isMe) {
 
@@ -99,13 +102,17 @@ export async function connectToWhatsApp() {
 
           await handleTextMessage(sock, msg)
 
+        } else if(audioMessage){
+
+          await handleAudioMessage(msg, sock);
+
         }else {
           await sock.sendMessage(chatId, {
             text: `আমি শুধু টেক্সট ও ছবি বুঝতে পারি। 😊\n\n_Arafat sir এখন উপস্থিত নেই, তিনি এর উত্তর আরও ভালো দিতে পারবেন।_`,
           });
         }
 
-      }catch(e){
+      } catch(e){
 
         console.error(e);
 

@@ -18,6 +18,6 @@ setInterval(async () => {
   } catch (error) {
     console.error("Health check failed:", error);
   }
-}, 60* 1000);
+}, 5 * 60* 1000);
 
 export default router;
