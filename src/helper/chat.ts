@@ -1,23 +1,16 @@
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { Chat } from "../models/chat.model.js";
 import { extractMessageData } from "./message.info.js";
-
-export type ChatMessage = {
-    role: "user" | "assistant";
-    content: string;
-    images?: string[];
-};
+import type { ChatMessage } from "../config/chat.js";
 
 export const greet = () => {
     const hour = new Date().getHours();
 
-    if (hour >= 5 && hour < 12) return 'Good Morning';
-    if (hour >= 12 && hour < 17) return 'Good Afternoon';
-    if (hour >= 17 && hour < 21) return 'Good Evening';
-
-    return 'Good Night';
+    if(hour >= 21 || hour < 5 ) return 'Good Night';
+    else if(hour>= 5 && hour < 12 ) return 'Good Morning';
+    else if(hour >= 12 && hour <= 17) return 'Good Afternoon';
+    return 'Good Evening';
 };
-
 
 export async function getHistory(chatId: string) {
   const chat = await Chat.findOne({chatId}).lean();

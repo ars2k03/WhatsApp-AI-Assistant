@@ -1,10 +1,12 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+dotenv.config();
 import { audioPrompt } from "../system prompt/audio.prompt.js";
 import { addMessage, getHistory } from "../helper/chat.js";
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { extractMessageData } from "../helper/message.info.js";
-dotenv.config();
+import { tools } from "../tools/gemmatools.js";
+
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
@@ -25,7 +27,6 @@ export const generatedReplyAudio = async (pcmBuffer : Buffer, msg : WAMessage) :
 
         const session = await ai.live.connect({
             model: "gemini-3.1-flash-live-preview",
-
             config: {
                 responseModalities: [Modality.AUDIO],
                 systemInstruction : {

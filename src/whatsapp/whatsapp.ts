@@ -53,7 +53,7 @@ export async function connectToWhatsApp() {
       if (albumMessage && !isMe) {
 
         await sock.sendMessage(chatId, {
-          text: `📸 আপনি একসাথে অনেকগুলো ছবি বা ভিডিও পাঠিয়েছেন!\n\nদুঃখিত, এগুলোর উত্তর দেওয়া আমার পক্ষে সম্ভব না। 😔\n\n_A R S Arafat আমাকে এই বিষয়ে প্রশিক্ষণ দেননি, তবে তিনি এর উত্তর অনেক ভালোভাবে দিতে পারবেন। 🙂_`
+          text: `📸 আপনি একসাথে অনেকগুলো ছবি বা ভিডিও পাঠিয়েছেন!\n\nদুঃখিত, এগুলোর উত্তর দেওয়া আমার পক্ষে সম্ভব না। 😔\n\n_Sir আমাকে এই বিষয়ে প্রশিক্ষণ দেননি, তবে তিনি এর উত্তর অনেক ভালোভাবে দিতে পারবেন। 🙂_`
         });
 
         return;
@@ -100,16 +100,12 @@ export async function connectToWhatsApp() {
 
         }else if(text) {
 
-          await handleTextMessage(sock, msg)
+          await handleTextMessage(sock, msg);
 
         } else if(audioMessage){
 
           await handleAudioMessage(msg, sock);
 
-        }else {
-          await sock.sendMessage(chatId, {
-            text: `আমি শুধু টেক্সট ও ছবি বুঝতে পারি। 😊\n\n_Arafat sir এখন উপস্থিত নেই, তিনি এর উত্তর আরও ভালো দিতে পারবেন।_`,
-          });
         }
 
       } catch(e){

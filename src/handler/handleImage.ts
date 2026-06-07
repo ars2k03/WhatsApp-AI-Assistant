@@ -17,11 +17,22 @@ export const handleImageMessage = async ( sock: any, msg: WAMessage) => {
     
     await sock.sendPresenceUpdate("composing", chatId);
 
-    const reply = await generatedReply(chatId, userName);
+    const {type, imageBuffer, content} = await generatedReply(chatId, userName);
 
-    await sock.sendMessage(chatId, {
-        text: reply
-    });
+    if(type === 'image'){
+
+        const buffer = imageBuffer;
+        
+        await sock.sendMessage(chatId, {
+            image: buffer,
+            caption: `🎨 ${content}`,
+        });
+
+    }else{
+        await sock.sendMessage(chatId, {
+            text: content,
+        });
+    }
 
     await sock.sendPresenceUpdate("paused", chatId);
 }
