@@ -4,7 +4,13 @@ import { extractMessageData } from "./message.info.js";
 import type { ChatMessage } from "../config/chat.js";
 
 export const greet = () => {
-    const hour = new Date().getHours();
+    const hour = Number(
+  new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: "Asia/Dhaka",
+  }).format(new Date())
+);
 
     if(hour >= 21 || hour < 5 ) return 'Good Night';
     else if(hour>= 5 && hour < 12 ) return 'Good Morning';
