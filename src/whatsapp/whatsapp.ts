@@ -10,8 +10,8 @@ import { handleImageMessage } from "../handler/handleImage.js";
 import { useMongoAuthState } from "../helper/mongoAuthState.js";
 import collection from "../database/auth.js";
 import {handleAudioMessage } from "../handler/handleAudio.js";
-
-let isEnableAi = true;
+import { downloadMedia } from "../helper/media.download.js";
+import { Settings } from "../models/settings.model.js";
 
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMongoAuthState(collection);
@@ -38,9 +38,13 @@ export async function connectToWhatsApp() {
   sock.ev.on("messages.upsert", async ({ messages }) => {
       const msg = messages[0];
 
+      const settings = await Settings.findOne();
+
       if (!msg?.message) return;
 
       const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage, audioMessage, editMessage} = extractMessageData(msg);
+
+      if(!extractMessageData(msg)) return;
 
       if (!chatId) return;
 
@@ -68,17 +72,7 @@ export async function connectToWhatsApp() {
       
       if (isMe) {
 
-        if ( text === '.ai') {
-          isEnableAi = !isEnableAi;
-
-          await sock.sendMessage(chatId, {
-            text: `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}`
-          });
-
-          return;
-        }
-
-        if(text && text !== `🤖 *A R S AI* is ${isEnableAi ? 'Enabled' : 'Disabled'}` && isEnableAi) {
+        if(text) {
 
           await addMessage(msg, {
             role: "assistant",
@@ -90,7 +84,28 @@ export async function connectToWhatsApp() {
         return;
       };
 
-      if(!isEnableAi) return;
+      if(!settings?.isEnableAi) {
+        if(text){
+
+          await addMessage(msg, {
+            role : "user",
+            content : text
+          })
+
+        }else if(imageMessage){
+
+          const buffer : any = await downloadMedia(msg, sock);
+
+          await addMessage(msg, {
+            role: "user",
+            content: imageMessage.caption || "Describe this image",
+            images: [buffer.toString("base64")]
+          })
+
+        }
+
+        return;
+      };
 
       try{
 

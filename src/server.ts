@@ -9,11 +9,11 @@ const port = 8000;
 
 app.use(express.json());
 
-app.use('/health', router);
+app.use('/', router);
 
 await connectDB();
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0' ,() => {
     
     console.log(`Server is Running ${port}....`);
 })
