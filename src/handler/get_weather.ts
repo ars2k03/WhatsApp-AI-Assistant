@@ -22,8 +22,7 @@ export async function handleGetWeather(location: string) :  Promise<string> {
 💨 বাতাস: ${data.current.wind_kph} km/h
 🌧️ বৃষ্টির সম্ভাবনা: ${data.current.chance_of_rain}%
 🕒 আপডেট: ${data.current.last_updated}
-`.trim();
-
+`
   } catch (e) {
 
     console.error("Weather error:", e);

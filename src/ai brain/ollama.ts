@@ -77,7 +77,9 @@ export async function generatedReply(chatId : string, userName : string) : Promi
             };
 
             if (tool.function.name === "web_search") {
+
                 const args = tool.function.arguments as Record<string, string>;
+
                 if (!args.query) return { type: 'text', content: 'Something went wrong.' };
 
                 const searchResult = await handleWebSearch(args.query);
@@ -85,17 +87,30 @@ export async function generatedReply(chatId : string, userName : string) : Promi
                 const content = await getFinalResponse(
                     userName,
                     history,
-                    searchResult,
+                    searchResult.content,
                     args.query
                 );
 
+                const sourceText = searchResult.sources.length ? 
+                "\n\n━━━━━━━━━━━━━━━\n🌐 *Sources*\n\n" + searchResult.sources.map((r, i) => {
+                    
+                    const domain = new URL(r).hostname
+                    .replace("www.", "")
+                    .split(".")[0];
+
+                    return `${i + 1}. *${domain}*\n\n🔗${r}`;
+
+                }).join("\n\n") 
+                : "";
+
                 return {
                     type: "text",
-                    content: content
+                    content: content + sourceText
                 };
             }
 
             if (tool.function.name === "get_weather") {
+
                 const args = tool.function.arguments as Record<string, string>;
                 if (!args.location) return { type: 'text', content: 'Something went wrong.' };
 

@@ -10,8 +10,6 @@ export const generatedIamge = async (imagePrompt : string) => {
     try{
         const url = await imageUrl(`${imagePrompt}`, { model: 'klein' });
 
-        console.log(url);
-
         const res = await axios.get(url, {
             responseType: "arraybuffer",
             headers: {
