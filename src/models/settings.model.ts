@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { settingsDB } from "../database/settings.db";
+import { settingsDB } from "../database/settings.db.js";
 
 const SettingsSchema = new mongoose.Schema({
   isEnableAi: {
