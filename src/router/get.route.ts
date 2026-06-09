@@ -17,7 +17,7 @@ router.route('/health').get((req : Request, res : Response) => {
 
 })
 
-router.get('/status', async (req : Request, res : Response) => {
+router.get('/status', authMiddleware, async (req : Request, res : Response) => {
 
   const settings = await Settings.findOne();
 
