@@ -42,6 +42,8 @@ export async function connectToWhatsApp() {
 
       if (!msg?.message) return;
 
+      if (msg.key.remoteJid === "status@broadcast")  return;
+
       const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage, audioMessage, editMessage} = extractMessageData(msg);
 
       if (!chatId) return;
