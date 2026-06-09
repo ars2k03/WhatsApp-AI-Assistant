@@ -33,7 +33,6 @@ const ChatSchema = new mongoose.Schema(
     chatNumber : {
       type : String,
       required : true,
-      unique : true,
     },
 
     history: {

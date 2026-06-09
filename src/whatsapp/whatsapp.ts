@@ -44,8 +44,6 @@ export async function connectToWhatsApp() {
 
       const {chatId, chatNumber, isMe, text, imageMessage, albumMessage, isAlbumChild, unsendMessage, reactionMessage, audioMessage, editMessage} = extractMessageData(msg);
 
-      if(!extractMessageData(msg)) return;
-
       if (!chatId) return;
 
       if (isIgnoredChat(chatNumber)) return;
