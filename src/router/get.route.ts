@@ -1,6 +1,7 @@
 import express, { type Request, type Response } from 'express';
 import { Settings } from '../models/settings.model.js';
 import { authMiddleware } from '../middleware/auth.middle.js';
+import { sock } from '../whatsapp/whatsapp.js';
 
 const router = express.Router();
 
@@ -16,6 +17,69 @@ router.route('/health').get((req : Request, res : Response) => {
   });
 
 })
+
+router.post('/send-otp', async (req : Request, res : Response) => {
+  try {
+
+    const phone = req.body?.phone?.trim();
+
+    if (!sock) {
+      return res.status(500).json({
+        success: false,
+        message: 'Server error'
+      });
+    }
+
+    if (!phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number is required'
+      });
+    }
+
+    if (!/^01\d{9}$/.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid phone number'
+      });
+    }
+
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    await sock.sendMessage(
+      `88${phone}@s.whatsapp.net`,
+      {
+        text:
+`👋 Welcome to *A R S Live*
+
+🔐 Your verification code is : *${otp}*
+
+For security reasons, do not share this code with anyone.
+
+⏳ This code will expire in 5 minutes.
+`
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'OTP sent successfully',
+      otp 
+    });
+
+  } catch (error) {
+
+    console.error('OTP Send Error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to send OTP'
+    });
+
+  }
+});
 
 router.get('/status', authMiddleware, async (req : Request, res : Response) => {
 

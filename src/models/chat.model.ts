@@ -26,8 +26,7 @@ const ChatSchema = new mongoose.Schema(
   {
     chatId: {
       type: String,
-      required: true,
-      unique: true,
+      required: true
     },
 
     chatNumber : {

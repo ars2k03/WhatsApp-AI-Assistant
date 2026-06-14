@@ -18,21 +18,22 @@ export const greet = () => {
     return 'Good Evening';
 };
 
-export async function getHistory(chatId: string) {
-  const chat = await Chat.findOne({chatId}).lean();
+export async function getHistory(chatNumber : string) {
+  const chat = await Chat.findOne({chatNumber}).lean();
 
   return chat?.history || [];
 }
 
 export async function addMessage(msg : WAMessage, message: ChatMessage) {
   const {chatId, chatNumber} = extractMessageData(msg);
-      
+
+
   await Chat.findOneAndUpdate(
-    { chatId },
+    { chatNumber },
     
     { 
       $setOnInsert : {
-        chatNumber
+        chatId
       },
       
       $push: 

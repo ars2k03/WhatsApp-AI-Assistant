@@ -7,11 +7,11 @@ import { pcmToOgg } from "../converter/pcmToOgg.js";
 
 export const handleAudioMessage = async (msg: WAMessage, sock: any) => {
 
-    const {chatId} = extractMessageData(msg);
+    const {chatNumber} = extractMessageData(msg);
 
     try {
 
-        await sock.sendPresenceUpdate("recording", chatId);
+        await sock.sendPresenceUpdate("recording", chatNumber);
 
         const oggBuffer = await downloadMedia(msg, sock);
 
@@ -21,19 +21,19 @@ export const handleAudioMessage = async (msg: WAMessage, sock: any) => {
 
         const replyOggBuffer = await pcmToOgg(replyPcmBuffer);
 
-        await sock.sendMessage(chatId, {
+        await sock.sendMessage(chatNumber, {
             audio: replyOggBuffer,
             mimetype: "audio/ogg; codecs=opus",
             ptt: true, 
         });
 
-        await sock.sendPresenceUpdate("paused", chatId);
+        await sock.sendPresenceUpdate("paused", chatNumber);
 
     } catch (err) {
 
         console.error("handleAudioMessage error:", err);
 
-        await sock.sendMessage(chatId, {
+        await sock.sendMessage(chatNumber, {
             text: "দুঃখিত, অডিও প্রসেস করতে সমস্যা হয়েছে। 😔",
         });
 

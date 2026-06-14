@@ -5,7 +5,6 @@ import { audioPrompt } from "../system prompt/audio.prompt.js";
 import { addMessage, getHistory } from "../helper/chat.js";
 import type { WAMessage } from "@whiskeysockets/baileys";
 import { extractMessageData } from "../helper/message.info.js";
-import { tools } from "../tools/gemmatools.js";
 
 
 const ai = new GoogleGenAI({
@@ -16,12 +15,12 @@ const CHUNK_SIZE = 24000 * 2 * 0.1;
 
 export const generatedReplyAudio = async (pcmBuffer : Buffer, msg : WAMessage) : Promise <Buffer> => {
 
-    const {userName, chatId} = extractMessageData(msg);
+    const {userName, chatNumber} = extractMessageData(msg);
 
     const audioChunks: Buffer[] = [];
     const outputTranscriptParts: string[] = [];
 
-    const history = await getHistory(chatId);
+    const history = await getHistory(chatNumber);
 
     return new Promise(async (resolve, reject) => {
 

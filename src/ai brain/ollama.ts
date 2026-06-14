@@ -18,9 +18,9 @@ const ollama = new Ollama({
   },
 });
 
-export async function generatedReply(chatId : string, userName : string) : Promise<Reply> {
+export async function generatedReply(chatNumber : string, userName : string) : Promise<Reply> {
 
-    const history : ChatMessage[] = await getHistory(chatId);
+    const history : ChatMessage[] = await getHistory(chatNumber);
 
     if (history.length === 1) {
         return {

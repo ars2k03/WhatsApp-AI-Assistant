@@ -5,7 +5,7 @@ import { addMessage } from "../helper/chat.js";
 import { extractMessageData } from "../helper/message.info.js";
 
 export const handleImageMessage = async ( sock: any, msg: WAMessage) => {
-    const {chatId, userName, imageMessage} = extractMessageData(msg);
+    const {chatNumber, userName, imageMessage} = extractMessageData(msg);
     
     const buffer : any = await downloadMedia(msg, sock);
     
@@ -15,24 +15,24 @@ export const handleImageMessage = async ( sock: any, msg: WAMessage) => {
         images: [buffer.toString("base64")]
     })
     
-    await sock.sendPresenceUpdate("composing", chatId);
+    await sock.sendPresenceUpdate("composing", chatNumber);
 
-    const {type, imageBuffer, content} = await generatedReply(chatId, userName);
+    const {type, imageBuffer, content} = await generatedReply(chatNumber, userName);
 
     if(type === 'image'){
 
         const buffer = imageBuffer;
         
-        await sock.sendMessage(chatId, {
+        await sock.sendMessage(chatNumber, {
             image: buffer,
             caption: `🎨 ${content}`,
         });
 
     }else{
-        await sock.sendMessage(chatId, {
+        await sock.sendMessage(chatNumber, {
             text: content,
         });
     }
 
-    await sock.sendPresenceUpdate("paused", chatId);
+    await sock.sendPresenceUpdate("paused", chatNumber);
 }

@@ -13,10 +13,12 @@ import {handleAudioMessage } from "../handler/handleAudio.js";
 import { downloadMedia } from "../helper/media.download.js";
 import { Settings } from "../models/settings.model.js";
 
+export let sock : any;
+
 export async function connectToWhatsApp() {
   const { state, saveCreds } = await useMongoAuthState(collection);
 
-  const sock = makeWASocket({
+  sock = makeWASocket({
     auth: state,
     printQRInTerminal: false,
     logger: P({ level: "silent" }),
@@ -37,7 +39,7 @@ export async function connectToWhatsApp() {
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
       const msg = messages[0];
-
+      
       const settings = await Settings.findOne();
 
       if (!msg?.message) return;
