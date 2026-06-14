@@ -26,7 +26,7 @@ export async function connectToWhatsApp() {
 
   sock.ev.on("creds.update", saveCreds);
 
-  sock.ev.on( "connection.update", async (update) => {
+  sock.ev.on( "connection.update", async (update : any) => {
       const {connection, qr, lastDisconnect} = update;
 
       if (qr) {
@@ -37,7 +37,7 @@ export async function connectToWhatsApp() {
 
   });
 
-  sock.ev.on("messages.upsert", async ({ messages }) => {
+  sock.ev.on("messages.upsert", async ({ messages } : any) => {
       const msg = messages[0];
       
       const settings = await Settings.findOne();
