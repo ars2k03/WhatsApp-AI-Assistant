@@ -21,7 +21,7 @@ router.route('/health').get((req : Request, res : Response) => {
 router.post('/send-otp', async (req : Request, res : Response) => {
   try {
 
-    const phone = req.body?.phone?.trim();
+    const {phone, otp} = req.body;
 
     if (!sock) {
       return res.status(500).json({
@@ -44,10 +44,6 @@ router.post('/send-otp', async (req : Request, res : Response) => {
       });
     }
 
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-
     await sock.sendMessage(
       `88${phone}@s.whatsapp.net`,
       {
@@ -65,8 +61,7 @@ For security reasons, do not share this code with anyone.
 
     return res.status(200).json({
       success: true,
-      message: 'OTP sent successfully',
-      otp 
+      message: 'OTP sent successfully'
     });
 
   } catch (error) {
