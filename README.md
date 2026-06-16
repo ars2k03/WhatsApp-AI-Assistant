@@ -1,146 +1,214 @@
 <div align="center">
 
 # WhatsApp AI Assistant 🤖💬
+
 <p>
   <img src="https://img.shields.io/badge/Node.js-20+-brightgreen?style=for-the-badge&logo=node.js">
   <img src="https://img.shields.io/badge/TypeScript-5+-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
-  <img src="https://img.shields.io/badge/Express.js-Backend-black?style=for-the-badge&logo=express">
-  <img src="https://img.shields.io/badge/LLM-Integrated-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Express.js-5-black?style=for-the-badge&logo=express">
+  <img src="https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb&logoColor=white">
   <img src="https://img.shields.io/badge/WhatsApp-Automation-25D366?style=for-the-badge&logo=whatsapp&logoColor=white">
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge">
 </p>
 
 <p>
-  Turn your WhatsApp into an AI-powered assistant built with <b>Express.js</b>, <b>TypeScript</b>, <b>Baileys</b>, and <b>Ollama</b>.
+  Turn your WhatsApp into a fully-featured AI-powered assistant — built with <b>Express.js</b>, <b>TypeScript</b>, <b>MongoDB</b>.
 </p>
 
 <p>
-  This project listens to incoming WhatsApp messages and generates smart replies automatically.
-  It supports text & image messages, conversation memory, and AI reply toggling with simple commands.
+  Listens to incoming WhatsApp messages and replies automatically using AI.
+  Supports text, images, web search, AI image generation, conversation memory stored in MongoDB, and much more.
 </p>
-
 
 </div>
 
+---
+
 ## ✨ Features
 
-- **Automatic AI replies** to incoming WhatsApp messages
-- **WhatsApp  login via QR code**
-- **Text and image message support**
-- **Conversation history** per chat for more contextual replies
-- **AI toggle command** using `.ai`
-- **Built with TypeScript** for cleaner and safer code
-- **Express.js server** to run and manage the bot process
+- 🤖 **Automatic AI replies** powered by Ollama (local LLM) and Google Gemini
+- 📲 **WhatsApp login via QR code** — no API key required
+- 🖼️ **Image understanding** — send an image and ask the AI about it
+- 🌐 **Web search integration** via Tavily API for real-time information
+- 🎨 **AI image generation** via Pollinations SDK
+- 🎵 **Audio/media processing** with FFmpeg support
+- 🧠 **Persistent conversation history** stored in MongoDB (per chat)
+- 📦 **Web scraping** support using Cheerio and Axios
+- 🚫 **Group chat ignored** — responds only to private messages
+- ⚡ **Hot reload in dev mode** with `tsx watch`
+- 🛡️ **Strict TypeScript** for safer and cleaner code
+
+---
 
 ## 🧰 Tech Stack
 
-- **Node.js**
-- **Express.js**
-- **TypeScript**
-- **@whiskeysockets/baileys**
-- **Ollama**
-- **dotenv**
-- **qrcode-terminal**
+| Category | Technology |
+|---|---|
+| Runtime | Node.js 20+ |
+| Language | TypeScript 5+ (ESNext, strict mode) |
+| Web Framework | Express.js 5 |
+| Database | MongoDB + Mongoose |
+| QR Code | qrcode-terminal |
+| Config | dotenv |
 
+---
 
 ## 🚀 Getting Started
 
-### 1) Clone the repository
+### Prerequisites
+
+- **Node.js** v20 or higher
+- **MongoDB** instance (local or cloud e.g. MongoDB Atlas)
+- **A WhatsApp account** for authentication
+- **API Keys** (optional but recommended):
+  - [Google Gemini API Key](https://aistudio.google.com/) — for cloud AI support
+  - [Tavily API Key](https://tavily.com/) — for web search feature
+
+---
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/ars2k03/WhatsApp-AI-Assistant.git
 cd WhatsApp-AI-Assistant
 ```
 
-### 2) Install dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3) Configure Ollama
+### 3. Configure environment variables
 
-Make sure Ollama is installed on your local machine and your local machine is connected to your Ollama account.
+Create a `.env` file in the root directory:
 
-If it isn't, configure an Ollama API endpoint before running the bot.
+```env
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/whatsapp-ai
+
+# Google Gemini (optional — for cloud AI)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Tavily (optional — for web search)
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# Ollama (default: http://localhost:11434)
+OLLAMA_HOST=http://localhost:11434
+```
 
 
-### 4) Run the bot
+### 4. Run the bot
 
-Development mode:
-
+**Development mode** (with hot reload):
 ```bash
 npm run dev
 ```
 
-Build for production:
-
+**Production build:**
 ```bash
 npm run build
-```
-
-Start production build:
-
-```bash
 npm start
 ```
 
+---
+
 ## 💬 How It Works
 
-1. The server starts with Express.
-2. The WhatsApp session connects using Baileys.
-3. A QR code is shown in the terminal for authentication.
-4. Incoming messages are read and sent to the AI layer.
-5. The assistant replies back in WhatsApp with a generated response.
+```
+User sends a WhatsApp message
+        ↓
+Express server receives it via Baileys
+        ↓
+Message is routed based on type (text / image / audio)
+        ↓
+AI engine selected (Ollama / Gemini cloud)
+        ↓
+Optional tools triggered (web search, image gen, scraping)
+        ↓
+Response sent back to WhatsApp
+        ↓
+Conversation saved to MongoDB
+```
+
+1. Express.js server starts and initializes Baileys.
+2. A **QR code** appears in the terminal — scan it with WhatsApp.
+3. The session is authenticated and the bot begins listening.
+4. Each incoming message is processed through the AI pipeline.
+5. The AI generates a reply and sends it back to WhatsApp.
+6. Chat history is persisted to **MongoDB** for contextual, multi-turn conversations.
+
+---
 
 ## 🧠 Supported Message Types
 
-- **Text messages**
-- **Image messages** with optional captions
+| Type | Description |
+|---|---|
+| Text | Standard text messages, fully supported |
+| Image | Images with optional captions — analyzed by AI |
+| Audio/Media | Processed via FFmpeg before handling |
 
-If a message is not supported, the bot sends a fallback response.
+> Unsupported message types receive a fallback response.
+
+---
 
 ## ⚙️ Behavior Notes
 
-- The bot stores recent chat history in memory.
-- Only the latest 20 messages are kept per chat.
-- Group chats are ignored in the current implementation.
-- Messages from the bot itself can be used to toggle the AI state with `.ai`.
+- Conversation history is **persisted in MongoDB** per chat (not just in-memory).
+- Only the most recent messages are used as context to keep prompts efficient.
+- **Group chats are ignored** — the bot only responds to private (1-to-1) messages.
+
+---
 
 ## 📝 Scripts
 
 ```json
 {
-  "dev": "tsx watch ./src/server.ts",
+  "dev":   "tsx watch ./src/server.ts",
   "build": "tsc",
   "start": "node dist/server.js"
 }
 ```
 
-## ✅ Requirements
+---
 
-- Node.js
-- A WhatsApp account
-- A working Ollama setup
-- A machine (Your Pc) that can stay online while the assistant is running
+## ✅ Requirements Checklist
 
-## 📌 Example Usage
+- [ ] Node.js v20+
+- [ ] A WhatsApp account (for QR scan)
+- [ ] MongoDB running (local or Atlas)
+- [ ] `.env` file configured
+- [ ] A machine that stays online while the assistant runs
 
-Send a message to the connected WhatsApp number, and the assistant will reply automatically.
+---
 
-To disable or enable the AI reply mode, send:
+## 📁 Project Structure
 
-```text
-.ai
 ```
+WhatsApp-AI-Assistant/
+├── src/
+│   └── server.ts       # Main entry point
+├── dist/               # Compiled output (after build)
+├── .env                # Environment variables (create this)
+├── .gitignore
+├── package.json
+├── tsconfig.json
+└── LICENSE
+```
+
+---
 
 ## 👤 Author
 
 **A R S**
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+GitHub: [@ars2k03](https://github.com/ars2k03)
 
 ---
 
+## 📄 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+---
+
+> ⚠️ **Disclaimer:** This project uses the unofficial WhatsApp Web API via Baileys. Use it responsibly and be aware of WhatsApp's Terms of Service.
