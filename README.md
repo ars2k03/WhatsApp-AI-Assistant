@@ -26,7 +26,7 @@
 
 ## ✨ Features
 
-- 🤖 **Automatic AI replies** powered by Ollama (local LLM) and Google Gemini
+- 🤖 **Automatic AI replies** powered by Ollama and Google Gemini
 - 📲 **WhatsApp login via QR code** — no API key required
 - 🖼️ **Image understanding** — send an image and ask the AI about it
 - 🌐 **Web search integration** via Tavily API for real-time information
@@ -60,9 +60,7 @@
 - **Node.js** v20 or higher
 - **MongoDB** instance (local or cloud e.g. MongoDB Atlas)
 - **A WhatsApp account** for authentication
-- **API Keys** (optional but recommended):
-  - [Google Gemini API Key](https://aistudio.google.com/) — for cloud AI support
-  - [Tavily API Key](https://tavily.com/) — for web search feature
+- **API Keys** 
 
 ---
 
@@ -87,7 +85,7 @@ Create a `.env` file in the root directory:
 # MongoDB
 MONGODB_URI=mongodb://localhost:27017/whatsapp-ai
 
-# Google Gemini (optional — for cloud AI)
+# Google Gemini ( cloud AI)
 GEMINI_API_KEY=your_gemini_api_key_here
 
 # Tavily (optional — for web search)
@@ -208,7 +206,3 @@ GitHub: [@ars2k03](https://github.com/ars2k03)
 ## 📄 License
 
 This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
----
-
-> ⚠️ **Disclaimer:** This project uses the unofficial WhatsApp Web API via Baileys. Use it responsibly and be aware of WhatsApp's Terms of Service.
