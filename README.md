@@ -175,9 +175,8 @@ Base URL defaults to `http://localhost:8000`.
 | `GET` | `/health` | No | Health check |
 | `GET` | `/status` | `x-api-key` | AI enabled flag |
 | `POST` | `/status` | `x-api-key` | Set `{ "enabled": true/false }` |
-| `POST` | `/send-otp` | No* | Send OTP-style WhatsApp text |
 
-\*Protect `/send-otp` in production (add auth or remove the route).
+Full reference + Postman collection: **[docs/API.md](docs/API.md)**
 
 Toggle AI:
 
@@ -208,6 +207,9 @@ WhatsApp-AI-Assistant/
 │   ├── CODEOWNERS
 │   ├── ISSUE_TEMPLATE/
 │   └── PULL_REQUEST_TEMPLATE.md
+├── docs/
+│   ├── API.md
+│   └── WhatsApp-AI-Assistant.postman_collection.json
 ├── src/
 │   ├── ai brain/
 │   ├── config/

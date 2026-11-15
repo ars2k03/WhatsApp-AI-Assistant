@@ -22,8 +22,7 @@ We aim to acknowledge reports within 7 days.
 - Never commit `.env` or session dumps.
 - Rotate `ARS_API_KEY`, Groq, Google, and Tavily keys if exposed.
 - Restrict MongoDB Atlas Network Access to known IPs when possible.
-- Protect or remove the `/send-otp` route in production.
-- Keep dependencies updated (`npm outdated` / Dependabot).
+- Keep dependencies updated (`npm outdated`).
 
 ## Disclaimer
 
