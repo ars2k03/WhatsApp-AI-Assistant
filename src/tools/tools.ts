@@ -1,4 +1,6 @@
-export const tools = [
+import type { ChatCompletionTool } from "groq-sdk/resources/chat/completions";
+
+export const tools: ChatCompletionTool[] = [
   {
     type: "function",
     function: {
@@ -18,39 +20,38 @@ export const tools = [
       },
     },
   },
-
   {
-    type: 'function',
+    type: "function",
     function: {
-      name: 'web_search',
-      description: 'Search the web for real-time information like news, weather, sports scores, stock prices, or any current events',
+      name: "web_search",
+      description:
+        "Search the web for real-time information like news, weather, sports scores, stock prices, or any current events",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
           query: {
-            type: 'string',
-            description: 'The search query to look up',
+            type: "string",
+            description: "The search query to look up",
           },
         },
-        required: ['query'],
+        required: ["query"],
       },
     },
   },
-
   {
-    type: 'function',
+    type: "function",
     function: {
-      name: 'get_weather',
-      description: 'Get current weather information for a location',
+      name: "get_weather",
+      description: "Get current weather information for a location",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
           location: {
-            type: 'string',
-            description: 'City name, e.g. Dhaka, Rajshahi',
+            type: "string",
+            description: "City name, e.g. Dhaka, Rajshahi",
           },
         },
-        required: ['location'],
+        required: ["location"],
       },
     },
   },

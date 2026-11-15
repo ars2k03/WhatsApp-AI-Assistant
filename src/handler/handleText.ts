@@ -1,34 +1,40 @@
-import type { WAMessage } from "@whiskeysockets/baileys";
-import { generatedReply } from "../ai brain/ollama.js";
+import type { WAMessage } from "baileys";
+import { generatedReply } from "../ai brain/groq.js";
 import { addMessage } from "../helper/chat.js";
 import { extractMessageData } from "../helper/message.info.js";
 
-export const handleTextMessage = async ( sock: any, msg: WAMessage) => {
-  const {chatNumber, userName, text} = extractMessageData(msg);
+export const handleTextMessage = async (sock: any, msg: WAMessage) => {
+  const { chatId, chatNumber, userName, text } = extractMessageData(msg);
+
+  if (!chatId || !text) return;
 
   await addMessage(msg, {
-    role : "user",
-    content : text
-  })
-  
-  await sock.sendPresenceUpdate("composing", chatNumber);
+    role: "user",
+    content: text,
+  });
 
-  const {type, content, imageBuffer} = await generatedReply(chatNumber ,userName);
-  
-  if(type === 'image'){
+  await sock.sendPresenceUpdate("composing", chatId);
 
-    const buffer = imageBuffer;
-    
-    await sock.sendMessage(chatNumber, {
-      image: buffer,
+  const { type, content, imageBuffer } = await generatedReply(
+    chatNumber,
+    userName
+  );
+
+  if (type === "image") {
+    await sock.sendMessage(chatId, {
+      image: imageBuffer,
       caption: `🎨 ${content}`,
     });
-
-  }else{
-    await sock.sendMessage(chatNumber, {
+  } else {
+    await sock.sendMessage(chatId, {
       text: content,
     });
   }
 
-  await sock.sendPresenceUpdate("paused", chatNumber);
-}
+  await addMessage(msg, {
+    role: "assistant",
+    content,
+  });
+
+  await sock.sendPresenceUpdate("paused", chatId);
+};

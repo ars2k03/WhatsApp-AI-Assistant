@@ -1,4 +1,4 @@
-import { downloadMediaMessage, type WAMessage } from "@whiskeysockets/baileys";
+import { downloadMediaMessage, type WAMessage } from "baileys";
 import P from "pino";
 
 export const downloadMedia = async ( msg: WAMessage, sock: any ) => {

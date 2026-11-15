@@ -1,11 +1,24 @@
-import { BufferJSON, initAuthCreds, type AuthenticationCreds, type AuthenticationState, type proto, type SignalDataTypeMap } from "@whiskeysockets/baileys";
+import { BufferJSON, initAuthCreds, type AuthenticationCreds, type AuthenticationState, type SignalDataTypeMap } from "baileys";
 import { Collection } from "mongodb";
+
+let allowSave = true;
+
+export const clearAuthState = async (collection: Collection) => {
+  allowSave = false;
+  await collection.deleteMany({});
+};
+
+export const enableAuthSave = () => {
+  allowSave = true;
+};
 
 export const useMongoAuthState = async (
   collection: Collection
 ): Promise<{ state: AuthenticationState; saveCreds: () => Promise<void> }> => {
+  allowSave = true;
 
   const writeData = async (id: string, data: object) => {
+    if (!allowSave) return;
     await collection.updateOne(
       { _id: id as any },
       { $set: { data: JSON.stringify(data, BufferJSON.replacer) } },
@@ -20,6 +33,7 @@ export const useMongoAuthState = async (
   };
 
   const removeData = async (id: string) => {
+    if (!allowSave) return;
     await collection.deleteOne({ _id: id as any });
   };
 
@@ -41,6 +55,7 @@ export const useMongoAuthState = async (
           return data;
         },
         set: async (data) => {
+          if (!allowSave) return;
           await Promise.all(
             Object.entries(data).flatMap(([type, ids]) =>
               Object.entries(ids as object).map(([id, value]) =>
@@ -54,6 +69,7 @@ export const useMongoAuthState = async (
       },
     },
     saveCreds: async () => {
+      if (!allowSave) return;
       await writeData("creds", creds);
     },
   };

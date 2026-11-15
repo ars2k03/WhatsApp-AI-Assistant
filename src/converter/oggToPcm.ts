@@ -8,7 +8,7 @@ export const oggToPcm = (oggBuffer: Buffer): Promise<Buffer> => {
 
         ffmpeg(input)
             .inputFormat("ogg")
-            .audioFrequency(24000)
+            .audioFrequency(16000)
             .audioChannels(1)
             .audioCodec("pcm_s16le")
             .format("s16le")
