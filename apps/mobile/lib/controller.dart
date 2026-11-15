@@ -1,0 +1,511 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
+import 'package:material_ui/material_ui.dart';
+
+import 'login.dart';
+
+class ControllerPage extends StatefulWidget {
+  const ControllerPage({super.key});
+
+  @override
+  State<ControllerPage> createState() => _ControllerPageState();
+}
+
+class _ControllerPageState extends State<ControllerPage> {
+  static const _storage = FlutterSecureStorage();
+
+  static const _baseUrl = 'https://whatsapp-ai-assistant-ee5w.onrender.com';
+
+  static const _timeout = Duration(seconds: 10);
+
+  String? _apiKey;
+
+  bool _isEnabled = false;
+  bool _isLoadingStatus = true;
+  bool _isUpdating = false;
+  bool _serverConnected = true;
+
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    _apiKey = await _storage.read(key: 'api_key');
+    await _loadStatus();
+  }
+
+  Future<void> _forceLogout() async {
+    await _storage.delete(key: 'api_key');
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LoginPage(),
+      ),
+          (route) => false,
+    );
+  }
+
+  Future<void> _loadStatus() async {
+    setState(() {
+      _isLoadingStatus = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await http
+          .get(
+        Uri.parse('$_baseUrl/status'),
+        headers: {
+          'x-api-key': _apiKey ?? '',
+        },
+      )
+          .timeout(_timeout);
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _isEnabled = data['aiEnabled'] ?? false;
+          _serverConnected = true;
+        });
+      } else if (response.statusCode == 401 ||
+          response.statusCode == 403) {
+        await _forceLogout();
+        return;
+      } else if (response.statusCode == 500) {
+        setState(() {
+          _serverConnected = true;
+          _errorMessage =
+          'Internal server error. Please try again later.';
+        });
+      } else if (response.statusCode == 503) {
+        setState(() {
+          _serverConnected = true;
+          _errorMessage =
+          'Service unavailable. Please try again later.';
+        });
+      } else {
+        setState(() {
+          _serverConnected = true;
+          _errorMessage =
+          'Failed to load status (${response.statusCode})';
+        });
+      }
+    } on TimeoutException {
+      if (!mounted) return;
+
+      setState(() {
+        _serverConnected = false;
+        _errorMessage =
+        'Server did not respond in time. Please try again.';
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _serverConnected = false;
+        _errorMessage =
+        'Connection failed. Please check your internet connection.';
+      });
+
+      debugPrint('Load status error: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingStatus = false);
+      }
+    }
+  }
+
+  Future<void> _updateStatus(bool newValue) async {
+    setState(() {
+      _isUpdating = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await http
+          .post(
+        Uri.parse('$_baseUrl/status'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': _apiKey ?? '',
+        },
+        body: jsonEncode({
+          'enabled': newValue,
+        }),
+      )
+          .timeout(_timeout);
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _isEnabled = newValue;
+          _serverConnected = true;
+        });
+      } else if (response.statusCode == 401 ||
+          response.statusCode == 403) {
+        await _forceLogout();
+        return;
+      } else {
+        setState(() {
+          _errorMessage =
+          'Update failed (${response.statusCode}).';
+        });
+      }
+    } on TimeoutException {
+      if (!mounted) return;
+
+      setState(() {
+        _serverConnected = false;
+        _errorMessage = 'Server did not respond in time.';
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _serverConnected = false;
+        _errorMessage =
+        'Connection failed. Please check your internet connection.';
+      });
+
+      debugPrint('Update status error: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdating = false);
+      }
+    }
+  }
+
+  Future<void> _logout() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Logout?'),
+        content: const Text(
+          'Your API key will be removed and you will need to sign in again.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await _forceLogout();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('WhatsApp AI Controller'),
+        backgroundColor: const Color(0xFF5C6BC0),
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout_rounded),
+            onPressed: _logout,
+          ),
+        ],
+      ),
+
+      body: SafeArea(
+        child: _isLoadingStatus
+            ? Center(
+          child: Lottie.asset(
+            "assets/lottiefiles/Sandy Loading.json",
+          ),
+        )
+            : RefreshIndicator(
+          onRefresh: _loadStatus,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                if (_errorMessage != null)
+                  _buildBanner(
+                    message: _errorMessage!,
+                    color: Colors.red,
+                    icon: Icons.error_outline_rounded,
+                    onDismiss: () {
+                      setState(
+                            () => _errorMessage = null,
+                      );
+                    },
+                  ),
+
+                const SizedBox(height: 16),
+
+                Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: Colors.grey.shade200,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      children: [
+
+                        AnimatedContainer(
+                          duration: const Duration(
+                            milliseconds: 400,
+                          ),
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: _isEnabled
+                                ? const Color(
+                              0xFF5C6BC0,
+                            ).withValues(alpha: 0.1)
+                                : Colors.grey.shade100,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.smart_toy_rounded,
+                            size: 56,
+                            color: _isEnabled
+                                ? const Color(0xFF5C6BC0)
+                                : Colors.grey.shade400,
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        AnimatedSwitcher(
+                          duration: const Duration(
+                            milliseconds: 300,
+                          ),
+                          child: _StatusBadge(
+                            key: ValueKey(_isEnabled),
+                            isEnabled: _isEnabled,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        Text(
+                          _isEnabled
+                              ? 'AI is automatically replying to WhatsApp messages'
+                              : 'AI is disabled and not sending replies',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'AI Auto Reply',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            _isUpdating
+                                ? const SizedBox(
+                              width: 36,
+                              height: 20,
+                              child: Center(
+                                child:
+                                CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                                : Switch.adaptive(
+                              value: _isEnabled,
+                              activeThumbColor:
+                                  const Color(0xFF5C6BC0),
+                              onChanged: _updateStatus,
+                            ),
+                          ],
+                        ),
+
+                        const Divider(height: 32),
+
+                        Row(
+                          children: [
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _serverConnected
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _serverConnected
+                                  ? 'Server Connected'
+                                  : 'Server Disconnected',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              'Render.com',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBanner({
+    required String message,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onDismiss,
+  }) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 10,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        border: Border.all(
+          color: color.withValues(alpha: 0.3),
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: color,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: onDismiss,
+            child: Icon(
+              Icons.close_rounded,
+              color: color,
+              size: 18,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  final bool isEnabled;
+
+  const _StatusBadge({
+    super.key,
+    required this.isEnabled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: isEnabled
+            ? Colors.green.shade50
+            : Colors.red.shade50,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isEnabled
+              ? Colors.green.shade200
+              : Colors.red.shade200,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isEnabled
+                ? Icons.check_circle_rounded
+                : Icons.cancel_rounded,
+            size: 16,
+            color: isEnabled
+                ? Colors.green.shade700
+                : Colors.red.shade700,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isEnabled
+                ? 'AI Enabled'
+                : 'AI Disabled',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: isEnabled
+                  ? Colors.green.shade700
+                  : Colors.red.shade700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

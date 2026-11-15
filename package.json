@@ -1,28 +1,10 @@
 {
   "name": "whatsapp-ai-assistant",
   "version": "1.2.3",
-  "description": "Personal WhatsApp AI assistant built with Baileys, Express, TypeScript, MongoDB, Groq, and Gemini Live",
-  "main": "dist/server.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "tsx watch ./src/server.ts"
-  },
-  "keywords": [
-    "whatsapp",
-    "baileys",
-    "ai",
-    "groq",
-    "gemini",
-    "mongodb",
-    "express",
-    "typescript",
-    "chatbot",
-    "assistant"
-  ],
-  "author": "A R S <https://github.com/ars2k03>",
+  "private": true,
+  "description": "Monorepo for WhatsApp AI Assistant — server (Node) and mobile controller (Flutter)",
   "license": "MIT",
+  "author": "A R S <https://github.com/ars2k03>",
   "homepage": "https://github.com/ars2k03/WhatsApp-AI-Assistant#readme",
   "repository": {
     "type": "git",
@@ -31,36 +13,18 @@
   "bugs": {
     "url": "https://github.com/ars2k03/WhatsApp-AI-Assistant/issues"
   },
+  "packageManager": "pnpm@12.21.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=9"
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE",
-    ".env.example"
-  ],
+  "scripts": {
+    "dev": "turbo run dev --filter=@whatsapp-ai/server",
+    "build": "turbo run build --filter=@whatsapp-ai/server",
+    "start": "turbo run start --filter=@whatsapp-ai/server",
+    "build:apk": "cd apps/mobile && flutter build apk --release && APP_NAME=$(grep -E '^name:' pubspec.yaml | head -1 | awk '{print $2}' | tr -d '\"') && mkdir -p ../../output && cp build/app/outputs/flutter-apk/app-release.apk \"../../output/${APP_NAME}.apk\" && echo \"APK → output/${APP_NAME}.apk\""
+  },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/fluent-ffmpeg": "^2.1.28",
-    "@types/node": "^25.9.1",
-    "@types/qrcode-terminal": "^0.12.2",
-    "tsx": "^4.23.15",
-    "typescript": "^6.0.3"
-  },
-  "dependencies": {
-    "@google/genai": "^3.3.0",
-    "@pollinations/sdk": "^5.0.1",
-    "@tavily/core": "^1.1.0",
-    "axios": "^1.21.1",
-    "baileys": "^7.0.0-rc14",
-    "cheerio": "^1.2.0",
-    "dotenv": "^17.4.2",
-    "express": "^5.3.0",
-    "fluent-ffmpeg": "^2.1.3",
-    "groq-sdk": "^1.6.0",
-    "mongodb": "^7.9.0",
-    "mongoose": "^9.12.1",
-    "qrcode-terminal": "^0.12.0"
+    "turbo": "2.11.11"
   }
 }

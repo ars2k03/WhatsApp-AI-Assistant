@@ -1,12 +1,17 @@
 node_modules/
+.pnpm-store/
 
 dist/
 build/
+output/
 *.tsbuildinfo
+.turbo/
 
 .env
 .env.*
 !.env.example
+apps/*/.env
+!apps/*/.env.example
 *.pem
 *.key
 credentials*.json
@@ -21,6 +26,7 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 coverage/
 .nyc_output/
 
@@ -33,7 +39,23 @@ Thumbs.db
 
 .claude/
 .cursor/
-.turbo/
 .tmp/
 temp/
 tmp/
+
+apps/mobile/.dart_tool/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.packages
+apps/mobile/build/
+apps/mobile/.pub-cache/
+apps/mobile/.pub/
+apps/mobile/android/.gradle/
+apps/mobile/android/local.properties
+apps/mobile/android/app/debug/
+apps/mobile/android/app/profile/
+apps/mobile/android/app/release/
+apps/mobile/ios/Pods/
+apps/mobile/ios/.symlinks/
+apps/mobile/ios/Flutter/Flutter.framework
+apps/mobile/ios/Flutter/Flutter.podspec

@@ -2,9 +2,17 @@
 
 Version: `1.2.3`  
 Base URL (local): `http://localhost:8000`  
-Content-Type: `application/json`
+Content-Type: `application/json`  
+App package: `@whatsapp-ai/server` (`apps/server`)
 
 This document describes the HTTP control plane for the assistant. WhatsApp message handling itself runs over Baileys (WebSocket) and is not exposed as REST.
+
+Run the server from the monorepo root:
+
+```bash
+pnpm dev:server
+```
+
 
 ---
 

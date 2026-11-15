@@ -1,8 +1,8 @@
-import express, { type Request, type Response } from "express";
+import express, { type Request, type Response, type Router } from "express";
 import { Settings } from "../models/settings.model.js";
 import { authMiddleware } from "../middleware/auth.middle.js";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.route("/health").get((req: Request, res: Response) => {
   res.status(200).json({

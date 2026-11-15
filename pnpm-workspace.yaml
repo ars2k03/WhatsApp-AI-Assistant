@@ -1,0 +1,14 @@
+packages:
+  - "apps/server"
+
+allowBuilds:
+  baileys: true
+  esbuild: true
+  protobufjs: true
+
+autoInstallPeers: true
+strictPeerDependencies: false
+
+permissions:
+  dotenv:
+    skills: false
