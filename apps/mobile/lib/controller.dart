@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:material_ui/material_ui.dart';
-
 import 'login.dart';
 
 class ControllerPage extends StatefulWidget {
@@ -18,7 +16,7 @@ class ControllerPage extends StatefulWidget {
 class _ControllerPageState extends State<ControllerPage> {
   static const _storage = FlutterSecureStorage();
 
-  static const _baseUrl = 'https://whatsapp-ai-assistant-ee5w.onrender.com';
+  static const _baseUrl = 'http://localhost:8000';
 
   static const _timeout = Duration(seconds: 10);
 

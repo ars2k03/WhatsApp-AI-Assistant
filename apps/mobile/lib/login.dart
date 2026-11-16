@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   static const _storage = FlutterSecureStorage();
-  static const _baseUrl = 'https://whatsapp-ai-assistant-ee5w.onrender.com';
+  static const _baseUrl = 'http://localhost:8000';
   static const _timeout = Duration(seconds: 10);
   String? _apiKey;
   bool _obscureText = true;
